@@ -1,16 +1,5 @@
 language: cpp
 
-sudo: required
-dist: trusty
-
-addons:
-  apt:
-    sources:
-      - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.8 main'
-        key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
-    packages:
-      - clang-3.8
-
 install:
   - sudo apt-get update -qq
   - sudo apt-get install -y -qq libdw-dev
@@ -24,5 +13,16 @@ before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
 
-script:
-  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+script: cmake
+
+matrix:
+  include:
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
+      os: linux
+      addons: &clang39
+      apt:
+        packages:
+          - util-linux
+          - clang-3.9
+        sources:
+          - llvm-toolchain-precise
