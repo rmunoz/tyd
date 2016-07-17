@@ -12,9 +12,10 @@ git:
 before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
+  - ./install-cmake.sh
 
 script:
-  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+  - mkdir build && cd build && ../cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug .. && make
 
 matrix:
   include:
@@ -27,3 +28,6 @@ matrix:
           - clang-3.9
         sources:
           - llvm-toolchain-precise
+
+notifications:
+  email: false
