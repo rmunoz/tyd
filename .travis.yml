@@ -1,8 +1,38 @@
 language: cpp
+script: cmake
 
-install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y -qq libdw-dev
+matrix:
+  include:
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
+      os: linux
+      addons: &clang39
+      apt:
+        packages:
+          - util-linux
+          - clang-3.9
+          - valgrind
+        sources:
+          - ubuntu-toolchain-r-test
+          - llvm-toolchain-precise
+
+    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
+      os: linux
+      addons: *clang39
+
+      # Test gcc-6: C++11/14
+    - env: GCC_VERSION=6 BUILD_TYPE=Debug
+      os: linux
+      addons: &gcc6
+      apt:
+        packages:
+          - g++-6
+          - valgrind
+        sources:
+          - ubuntu-toolchain-r-test
+
+    - env: GCC_VERSION=6 BUILD_TYPE=Debug
+      os: linux
+      addons: *gcc6
 
 # Handle git submodules yourself
 git:
@@ -13,6 +43,7 @@ before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
   - ./install-cmake.sh
+  - if [ -n "$GCC_VERSION"  ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -n "$CLANG_VERSION"  ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
   - which $CXX
   - which $CC
@@ -23,38 +54,6 @@ script:
   - cd build
   - ../cmake/bin/cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
   - make VERBOSE=1
-
-matrix:
-  include:
-    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug CPP=11
-      os: linux
-      addons: &clang39
-      apt:
-        packages:
-          - util-linux
-          - clang-3.9
-        sources:
-          - ubuntu-toolchain-r-test
-          - llvm-toolchain-precise
-
-    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug CPP=1z
-      os: linux
-      addons: *clang39
-
-      # Test gcc-6: C++11/14
-    - env: GCC_VERSION=6 BUILD_TYPE=Debug CPP=11
-      os: linux
-      addons: &gcc6
-      apt:
-        packages:
-          - g++-6
-          - valgrind
-        sources:
-          - ubuntu-toolchain-r-test
-
-    - env: GCC_VERSION=6 BUILD_TYPE=Debug CPP=14
-      os: linux
-      addons: *gcc6
 
 notifications:
   email: false
