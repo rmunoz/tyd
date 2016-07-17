@@ -9,7 +9,7 @@ addons:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty
     packages:
-      - clang-3.9
+      - clang
 
 install:
   - sudo apt-get update -qq
