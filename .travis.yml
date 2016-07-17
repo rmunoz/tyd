@@ -1,8 +1,19 @@
 language: cpp
 
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty
+    packages:
+      - clang-3.9
+
 install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y -qq clang-3.9 libdw-dev
+  - sudo apt-get install -y -qq libdw-dev
 
 # Handle git submodules yourself
 git:
