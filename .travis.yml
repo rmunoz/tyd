@@ -6,7 +6,7 @@ install:
 
 # Handle git submodules yourself
 git:
-	submodules: false
+  submodules: false
 
 # Use sed to replace the SSH URL with the public URL, then initialize submodules
 before_install:
