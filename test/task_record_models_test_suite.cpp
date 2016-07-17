@@ -36,7 +36,7 @@ TEST(task_records, build_a_task_record_full_ctor)
   auto timestamp = std::chrono::system_clock::now();
   auto start = make_time_point(2016, 6, 1, 12, 0, 0);
   auto end = make_time_point(2016, 6, 1, 14, 0, 0);
-  auto estimate = 12h;
+  effort estimate = 12h;
 
   task_record trecord = { timestamp, start, end, estimate };
 
@@ -82,7 +82,7 @@ TEST(task_records, set_estimate)
 {
   auto timestamp = std::chrono::system_clock::now();
   auto start = make_time_point(2016, 6, 1, 12, 0, 0);
-  auto estimate = 12h;
+  effort estimate = 12h;
 
   task_record trecord = { timestamp, start };
 

@@ -31,7 +31,23 @@ TEST(tasks_manager, add_several_tasks)
   EXPECT_EQ(task2.size(), size);
 }
 
-TEST(tasks_manager, find_task)
+TEST(tasks_manager, find_a_valid_task)
 {
-  EXPECT_TRUE(false); // TODO
+  auto expected_task = tyd::managers::add_task(
+      "another task@project",
+      6h,
+      task_size::XXL);
+
+  auto task = tyd::managers::find_task(expected_task.id());
+
+  EXPECT_EQ(task, expected_task);
+  EXPECT_EQ(task, expected_task);
+}
+
+TEST(tasks_manager, find_an_unregisterd_task)
+{
+  ASSERT_THROW(
+      tyd::managers::find_task(tyd::models::task_id(99999)),
+      std::runtime_error
+    );
 }

@@ -63,7 +63,7 @@ TEST(tasks, close_record)
   task task = { 42, "task@project", 12h, task_size::XL };
   auto start = make_time_point(2016, 6, 1, 12, 0, 0);
   auto end = make_time_point(2016, 6, 1, 14, 0, 0);
-  auto reestimate = 10h;
+  effort reestimate = 10h;
 
   EXPECT_TRUE(task.records().empty());
 
@@ -145,5 +145,19 @@ TEST(tasks, task_size_to_task_size)
 
 TEST(tasks, get_invested_effort)
 {
-  EXPECT_TRUE(false); // TODO
+  task task = { 42, "task@project", 12h, task_size::XL };
+
+  EXPECT_TRUE(task.records().empty());
+
+  task.open_record(make_time_point(2016, 6, 1, 12, 0, 0));
+  task.close_record(make_time_point(2016, 6, 1, 14, 0, 0), 10h);
+
+  task.open_record(make_time_point(2016, 6, 1, 15, 0, 0));
+  task.close_record(make_time_point(2016, 6, 1, 18, 30, 0), 8h);
+
+  task.open_record(make_time_point(2016, 6, 1, 19, 0, 0));
+  task.close_record(make_time_point(2016, 6, 1, 20, 30, 0), 6h);
+
+  effort expected_effort = 7h;
+  EXPECT_EQ(tyd::models::get_invested_effort(task), expected_effort);
 }

@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <map>
 
+//#include "backward.hpp"
+#include "rang/include/rang.hpp"
+
 using namespace tyd;
 
 using namespace std::chrono_literals;
@@ -21,36 +24,48 @@ auto help = [](arguments& args) -> bool
 {
   #pragma unused(args)
 
-  std::cout << "Available commands\n";
-  std::cout << "------------------\n\n";
-  std::cout << "\thelp: print this help\n";
-  std::cout << "\tquit: quits\n";
-
-  std::cout << "\n";
-  std::cout << "Tasks management\n";
-  std::cout << "----------------\n\n";
-  std::cout << "\tadd name estimate size: adds a task with these args\n";
-  std::cout << "\t\tname: a string without spaces.\n";
-  std::cout << "\t\testimate: the initial estimate in hours.\n";
-  std::cout << "\t\tsize: the task size: XS, S, M, L, XL or XXL.\n";
-  std::cout << "\tprint id: prints the informationof the task with that id\n";
-
-  std::cout << "\n";
-  std::cout << "Task recording\n";
-  std::cout << "----------------\n\n";
-  std::cout << "\tstart id [timestamp]: starts a new task record. It will\n";
-  std::cout << "\t                      close the current task record if it\n";
-  std::cout << "\t                      is already open\n";
-  std::cout << "\t\tid: the id of the associated task.\n";
-  std::cout << "\t\ttimestamp: YYYY-MM-DDTHH:MM:SS to set as start, if it is\n";
-  std::cout << "\t\t           not defined, current timestamp will be used.\n";
-  std::cout << "\tend restimate [timestamp]: ends the current opened task";
-  std::cout << "\t\t                         record.\n";
-  std::cout << "\t\trestimate: the remaining estimate in hours.\n";
-  std::cout << "\t\ttimestamp: YYYY-MM-DDTHH:MM:SS to set as end, if it is\n";
-  std::cout << "\t\t           not defined, current timestamp will be used.\n";
-
-  std::cout << "\n";
+  std::cout << rang::style::bold << rang::style::underline
+      << "Available commands\n" << rang::style::reset
+      << rang::style::bold << "\thelp:"
+      << rang::style::reset << " print this help\n"
+      << rang::style::bold << "\tquit:"
+      << rang::style::reset <<" quits\n"
+      << rang::style::bold << rang::style::underline
+      << "Tasks management\n" << rang::style::reset
+      << rang::style::bold << "\tadd"
+      << rang::style::dim << rang::fg::yellow << " name estimate size"
+      << rang::style::reset << ": adds a task.\n"
+      << rang::style::bold << "\t  name: "
+      << rang::style::reset << "a string without spaces.\n"
+      << rang::style::bold << "\t  estimate: "
+      << rang::style::reset << "the initial estimate in hours.\n"
+      << rang::style::bold << "\t  size: "
+      << rang::style::reset << "the task size: XS, S, M, L, XL or XXL.\n"
+      << rang::style::bold << "\tprint"
+      << rang::style::dim << rang::fg::yellow << " id"
+      << rang::style::reset << ": prints information of a task by its id.\n"
+      << rang::style::bold << rang::style::underline
+      << "Task recording\n" << rang::style::reset
+      << rang::style::bold << "\tstart"
+      << rang::style::dim << rang::fg::yellow << " id [timestamp]"
+      << rang::style::reset << ": starts a new task record. It will close the "
+                                "current task record if it is already open\n"
+      << rang::style::bold << "\t  id:"
+      << rang::style::reset << " the id of the associated task.\n"
+      << rang::style::bold << "\t  timestamp:"
+      << rang::style::reset << " YYYY-MM-DDTHH:MM:SS to set as start, if it is "
+                                "not defined, current timestamp will be used.\n"
+      << rang::style::bold << "\tend"
+      << rang::style::dim << rang::fg::yellow << " restimate [timestamp]"
+      << rang::style::reset << ": ends the current opened task record.\n"
+      << rang::style::bold << "\t  id:"
+      << rang::style::reset << " the id of the associated task.\n"
+      << rang::style::bold << "\t  restimate:"
+      << rang::style::reset <<" the remaining estimate in hours.\n"
+      << rang::style::bold << "\t  timestamp:"
+      << rang::style::reset << " YYYY-MM-DDTHH:MM:SS to set as end, if it is "
+                                "not defined, current timestamp will be used.";
+  std::cout << "\n\n";
 
   return true;
 };
@@ -59,7 +74,7 @@ auto quit = [](arguments& args) -> bool
 {
   #pragma unused(args)
 
-  std::cout << "Bye...\n";
+  std::cout << rang::fg::blue << "Bye...\n" << rang::style::reset;
   keep_running = false;
 
   return true;
@@ -101,23 +116,31 @@ auto print_task = [](arguments& args) -> bool
     auto& task = tyd::managers::find_task(std::atoi(args.front().c_str()));
 
     auto invested = tyd::models::get_invested_effort(task);
-    auto remaining = task.records().back().estimate().value_or(
-        task.estimate() - invested
-      );
+    auto remaining = task.estimate() - invested;
+    auto deviation = invested - task.estimate();
+
+    using namespace std::chrono;
 
     std::cout << "id: " << task.id() << "\n";
     std::cout << "name: " << task.name() << "\n";
     std::cout << "size: " << tyd::models::to_string(task.size()) << "\n";
-    std::cout << "original estimate: " << task.estimate().count() << " hours\n";
-    std::cout << "invested effort: " << invested.count() << "hours\n";
-    std::cout << "remaining effort: " << remaining.count() << "hours\n";
-    std::cout << "deviation: " << "not implemented yet " << "hours\n";
+    std::cout << "original estimate: "
+      << duration_cast<hours>(task.estimate()).count() << " hours\n";
+    std::cout << "invested effort: "
+      << duration_cast<hours>(invested).count() << " hours\n";
+    std::cout << "remaining effort: "
+      << duration_cast<hours>(remaining).count() << " hours\n";
+    std::cout << "deviation: "
+      << duration_cast<hours>(deviation).count() << " hours\n";
+
+    std::cout << "\ntask records: " << task.records().size() << "\n";
 
     retvalue = true;
   }
   catch(const std::exception& ex)
   {
-    std::cout << "The task with id: " << args.front() << " does not exist.\n";
+    std::cout << "The task with id: " << rang::fg::green << args.front()
+      << rang::style::reset << " does not exist.\n";
   }
 
   return retvalue;
@@ -135,7 +158,8 @@ auto start_record = [](arguments& args) -> bool
     auto time = std::chrono::system_clock::now();
     if(not args.empty())
     {
-      std::cout << "Could not use timestamp (not implemented yet) using now.\n";
+      std::cout << rang::fg::yellow << "Use of timestamp not implemented yet,"
+        << " using now timestamp.\n" << rang::style::reset;
     }
 
     task.open_record(time);
@@ -144,7 +168,8 @@ auto start_record = [](arguments& args) -> bool
   }
   catch(const std::exception& ex)
   {
-    std::cout << "The task with id: " << args.front() << " does not exist.\n";
+    std::cout << "The task with id: " << rang::fg::green << args.front()
+      << rang::style::reset << " does not exist.\n";
   }
 
   return retvalue;
@@ -165,7 +190,8 @@ auto end_record = [](arguments& args) -> bool
     auto time = std::chrono::system_clock::now();
     if(not args.empty())
     {
-      std::cout << "Could not use timestamp (not implemented yet) using now.\n";
+      std::cout << rang::fg::yellow << "Use of timestamp not implemented yet,"
+        << " using now timestamp.\n" << rang::style::reset;
     }
 
     task.close_record(time, reestimate);
@@ -174,7 +200,8 @@ auto end_record = [](arguments& args) -> bool
   }
   catch(const std::exception& ex)
   {
-    std::cout << "The task with id: " << args.front() << " does not exist.\n";
+    std::cout << "The task with id: " << rang::fg::green << args.front()
+      << rang::style::reset << " does not exist.\n";
   }
 
   return retvalue;
@@ -194,7 +221,7 @@ bool dispatch_command(
     std::queue<std::string>& args
   )
 {
-  bool retvalue = false;
+  bool retvalue = true;
 
   try
   {
@@ -202,7 +229,7 @@ bool dispatch_command(
   }
   catch(const std::exception& ex)
   {
-    std::cout << "Unknown command\n";
+    std::cout << rang::fg::red << "Unknown command\n" << rang::style::reset;
   }
 
   return retvalue;
@@ -212,7 +239,7 @@ int main()
 {
   while(keep_running)
   {
-    std::cout << "Command (or type help): ";
+    std::cout << rang::fg::blue << "[tyd]" << rang::style::reset << "# ";
 
     std::string input;
     std::getline(std::cin, input);
@@ -227,7 +254,7 @@ int main()
 
     if(not dispatch_command(command, args))
     {
-      std::cout << "Invalid arguments, see help";
+      std::cout << rang::fg::red << "Invalid arguments\n" << rang::style::reset;
     }
   }
 }

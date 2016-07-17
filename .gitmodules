@@ -1,0 +1,8 @@
+[submodule "extra/backward-cpp"]
+	path = extra/backward-cpp
+	url = git@github.com:rmunoz/backward-cpp.git
+	branch = master
+[submodule "extra/rang"]
+	path = extra/rang
+	url = git@github.com:agauniyal/rang.git
+	branch = master

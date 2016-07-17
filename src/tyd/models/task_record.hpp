@@ -8,7 +8,7 @@
 namespace tyd::models {
 
   using task_record_time = std::chrono::system_clock::time_point;
-  using effort = std::chrono::hours;
+  using effort = std::chrono::minutes;
 
   class task_record
   {

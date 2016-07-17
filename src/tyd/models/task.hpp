@@ -60,6 +60,9 @@ namespace tyd::models {
   };
 
   std::ostream& operator<<(std::ostream& os, const task& task);
+  bool operator<(const task& lhs, const task& rhs);
+  bool operator==(const task& lhs, const task& rhs);
+
   effort get_invested_effort(const task& task);
 
 

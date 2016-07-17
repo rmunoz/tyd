@@ -100,7 +100,9 @@ namespace tyd::models {
     os << "\n\tTask";
     os << "\n\t\tid: " << task.id();
     os << "\n\t\tname: " << task.name();
-    os << "\n\t\testimate: " << task.estimate().count() << " hours";
+    os << "\n\t\testimate: "
+      << std::chrono::duration_cast<std::chrono::hours>(task.estimate()).count()
+      << " hours";
     os << "\n\t\tsize: " << to_string(task.size());
 
     os << "\n\t\ttask records: \n";
@@ -116,16 +118,26 @@ namespace tyd::models {
     return os;
   }
 
+  bool operator==(const task& lhs, const task& rhs)
+  {
+    return (lhs.id() == rhs.id());
+  }
+
+  bool operator<(const task& lhs, const task& rhs)
+  {
+    return (lhs.id() < rhs.id());
+  }
+
   effort get_invested_effort(const task& task)
   {
     return std::accumulate(
         std::begin(task.records()),
         std::end(task.records()),
-        0h,
+        0min,
         [](const effort& invested, const tyd::models::task_record& elem)
         {
           auto end = elem.end().value_or(std::chrono::system_clock::now());
-          return invested + std::chrono::duration_cast<std::chrono::hours>(
+          return invested + std::chrono::duration_cast<effort>(
               end - elem.start()
             );
         }
