@@ -34,23 +34,23 @@ matrix:
           - util-linux
           - clang-3.9
         sources:
-					- ubuntu-toolchain-r-test
+          - ubuntu-toolchain-r-test
           - llvm-toolchain-precise
 
     - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug CPP=1z
       os: linux
       addons: *clang39
 
-    # Test gcc-6: C++11/14
+      # Test gcc-6: C++11/14
     - env: GCC_VERSION=6 BUILD_TYPE=Debug CPP=11
       os: linux
       addons: &gcc6
-        apt:
-          packages:
-            - g++-6
-            - valgrind
-          sources:
-            - ubuntu-toolchain-r-test
+      apt:
+        packages:
+          - g++-6
+          - valgrind
+        sources:
+          - ubuntu-toolchain-r-test
 
     - env: GCC_VERSION=6 BUILD_TYPE=Debug CPP=14
       os: linux
