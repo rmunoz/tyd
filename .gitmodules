@@ -2,3 +2,7 @@
 	path = extra/rang
 	url = git@github.com:agauniyal/rang.git
 	branch = master
+[submodule "extra/backward-cpp"]
+	path = extra/backward-cpp
+	url = git@github.com:rmunoz/backward-cpp.git
+	branch = master
