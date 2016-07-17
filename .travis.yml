@@ -13,9 +13,13 @@ before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
   - ./install-cmake.sh
+  - if [ -n "$CLANG_VERSION"  ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
 
 script:
-  - mkdir build && cd build && ../cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+  - mkdir -p build
+  - cd build
+  - ../cmake/bin/cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+  - make VERBOSE=1
 
 matrix:
   include:
