@@ -1,6 +1,8 @@
 language: cpp
 script: cmake
 
+sudo: required
+
 matrix:
   include:
     - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
