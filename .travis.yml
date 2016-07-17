@@ -1,8 +1,8 @@
 language: cpp
 
 install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -y -qq clang-3.9 libdw-dev
+  - sudo apt-get update -qq
+  - sudo apt-get install -y -qq clang-3.9 libdw-dev
 
 # Handle git submodules yourself
 git:
@@ -10,8 +10,8 @@ git:
 
 # Use sed to replace the SSH URL with the public URL, then initialize submodules
 before_install:
-		- sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
-		- git submodule update --init --recursive
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
 
 script:
-    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
