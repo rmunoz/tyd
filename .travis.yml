@@ -6,6 +6,7 @@ dist: trusty
 
 os: linux
 compiler: clang
+env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
 addons:
   apt:
     sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise']
