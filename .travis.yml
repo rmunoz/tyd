@@ -2,6 +2,17 @@ language: cpp
 script: cmake
 
 sudo: required
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty
+    packages:
+      - util-linux
+      - clang-3.9
+      - valgrind
 
 matrix:
   include:
@@ -16,25 +27,6 @@ matrix:
         sources:
           - ubuntu-toolchain-r-test
           - llvm-toolchain-precise
-
-    - env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
-      os: linux
-      addons: *clang39
-
-      # Test gcc-6: C++11/14
-    - env: GCC_VERSION=6 BUILD_TYPE=Debug
-      os: linux
-      addons: &gcc6
-      apt:
-        packages:
-          - g++-6
-          - valgrind
-        sources:
-          - ubuntu-toolchain-r-test
-
-    - env: GCC_VERSION=6 BUILD_TYPE=Debug
-      os: linux
-      addons: *gcc6
 
 # Handle git submodules yourself
 git:
