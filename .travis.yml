@@ -6,7 +6,7 @@ dist: trusty
 
 os: linux
 compiler: clang
-env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
+env: CLANG_VERSION=3.9 LIBCXX=On BUILD_TYPE=Debug
 addons:
   apt:
     sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise']
@@ -22,6 +22,8 @@ before_install:
   - git submodule update --init --recursive
   - ./install-cmake.sh
   - if [ -n "$CLANG_VERSION"  ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
+  - if [ "$LIBCXX" == "On" ]; then CXX_FLAGS="${CXX_FLAGS} -stdlib=libc++ -I/usr/include/c++/v1/"; fi
+  - if [ "$LIBCXX" == "On" ]; then CXX_LINKER_FLAGS="${CXX_FLAGS} -L/usr/lib/ -lc++"; fi
   - which $CXX
   - which $CC
   - $CXX --version
