@@ -10,7 +10,7 @@ env: CLANG_VERSION=3.9 LIBCXX=On BUILD_TYPE=Debug
 addons:
   apt:
     sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise']
-    packages: ['clang-3.9', 'libstdc++6', 'valgrind']
+    packages: ['clang-3.9', 'libstdc++6', 'libstdc++-6-dev', 'valgrind']
 
 # Handle git submodules yourself
 git:
