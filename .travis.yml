@@ -4,17 +4,12 @@ script: cmake
 sudo: required
 dist: trusty
 
-env: CLANG_VERSION=3.9 BUILD_TYPE=Debug
 os: linux
+compiler: clang
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty
-    packages:
-      - util-linux
-      - clang-3.9
-      - valgrind
+    sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise']
+    packages: ['clang-3.9', 'valgrind']
 
 # Handle git submodules yourself
 git:
